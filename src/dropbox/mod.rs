@@ -4,8 +4,6 @@
  *  dbxup - simple dropbox sync service
  *      (c) 2025-26 Stuart Hunter
  *
- *  Independent astronomical calculations (sunrise, sunset, moonrise, moonset)
- *  Used for auto-brightness and display - works without weather service
  *
  *      This program is free software: you can redistribute it and/or modify
  *      it under the terms of the GNU General Public License as published by
