@@ -1,0 +1,36 @@
+[Unit]
+Description=Dropbox Folder Watcher - Auto-upload new files
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/home/%i
+
+# Environment variables
+Environment="DROPBOX_APP_KEY=YOUR_APP_KEY_HERE"
+Environment="DROPBOX_APP_SECRET=YOUR_APP_SECRET_HERE"
+
+# Run the watcher
+# Customize --folders to match your needs
+ExecStart=/data2/dbxup/target/release/dbxup watch \
+    --folders /path/to/watch:/dropbox/destination \
+    --parallel 5 \
+    --debounce 2000
+
+# Restart on failure
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=dbxup-watch
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target

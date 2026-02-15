@@ -1,0 +1,23 @@
+# Rust build artifacts
+/target
+Cargo.lock
+
+# IDE and editor files
+.vscode/
+.claude/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Sensitive files - DO NOT COMMIT
+.env
+*.token
+*_token.txt
+dropbox_token*
+dbx
+
+# Test files
+test_uploads/
+tmp/

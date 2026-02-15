@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "local_path": "/home/user/Documents",
+      "dropbox_path": "/Backup/Documents",
+      "description": "Auto-backup documents"
+    },
+    {
+      "local_path": "/home/user/Photos",
+      "dropbox_path": "/Photos",
+      "description": "Photo sync"
+    },
+    {
+      "local_path": "/var/log/myapp",
+      "dropbox_path": "/Logs/myapp",
+      "description": "Application logs"
+    }
+  ],
+  "settings": {
+    "parallel_uploads": 5,
+    "debounce_ms": 2000
+  }
+}
