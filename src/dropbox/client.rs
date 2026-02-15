@@ -56,4 +56,32 @@ impl DropboxClient {
     pub fn client(&self) -> &UserAuthDefaultClient {
         &self.client
     }
+
+    /// Check if a file exists at the given Dropbox path and return its size
+    /// Returns Some(size) if file exists, None if it doesn't exist
+    pub async fn get_file_size(&self, path: &str) -> Result<Option<u64>> {
+        use dropbox_sdk::files;
+
+        match files::get_metadata(&self.client, &files::GetMetadataArg::new(path.to_string())).await {
+            Ok(metadata) => {
+                // Extract size from metadata
+                if let files::Metadata::File(file_metadata) = metadata {
+                    Ok(Some(file_metadata.size))
+                } else {
+                    // It's a folder, not a file
+                    Ok(None)
+                }
+            }
+            Err(e) => {
+                // Check if it's a "not found" error
+                let error_str = e.to_string();
+                if error_str.contains("not_found") || error_str.contains("path/not_found") {
+                    Ok(None)
+                } else {
+                    // Other error - propagate it
+                    Err(DbxUpError::DropboxApi(format!("Failed to get file metadata: {}", e)))
+                }
+            }
+        }
+    }
 }

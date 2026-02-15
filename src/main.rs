@@ -27,6 +27,7 @@ mod dropbox;
 mod error;
 mod files;
 mod oauth;
+mod persistent_queue;
 mod retry;
 mod token_storage;
 mod upload_manager;
@@ -298,9 +299,15 @@ async fn main() -> Result<()> {
                 };
 
                 let mut folder_watcher = if let Some(cfg_path) = config {
-                    watcher::FolderWatcher::new_with_config_file(watch_config, cfg_path, client)
+                    watcher::FolderWatcher::new_with_config_file(
+                        watch_config,
+                        cfg_path,
+                        client,
+                        app_key,
+                        app_secret,
+                    )?
                 } else {
-                    watcher::FolderWatcher::new(watch_config, client)
+                    watcher::FolderWatcher::new(watch_config, client, app_key, app_secret)?
                 };
                 folder_watcher.watch().await?;
 
