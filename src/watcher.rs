@@ -590,10 +590,10 @@ impl FolderWatcher {
                                     );
                                     continue;
                                 }
-
+                                let mut should_upload = false;
                                 match client.get_file_size(&metadata.dropbox_path).await {
                                     Ok(remote_size) => {
-                                        let should_upload = match remote_size {
+                                        should_upload = match remote_size {
                                             None => {
                                                 // File doesn't exist
                                                 log::info!(
@@ -623,25 +623,27 @@ impl FolderWatcher {
                                             }
                                         };
 
-                                        if should_upload {
-                                            let entry = QueueEntry::new(
-                                                metadata.local_path.clone(),
-                                                metadata.dropbox_path.clone(),
-                                                metadata.size,
-                                            );
-
-                                            let mut state = self.state.write().await;
-                                            state.queue.add(entry);
-                                            total_queued += 1;
-                                        }
                                     }
                                     Err(e) => {
-                                        log::error!(
-                                            "Failed to check file metadata in Dropbox: {} - {}",
-                                            metadata.dropbox_path,
-                                            e
-                                        );
+                                        //log::error!(
+                                        //    "Failed to check file metadata in Dropbox: {} - {}",
+                                        //    metadata.dropbox_path,
+                                        //    e
+                                        //);
+                                        // file does not exist - should be catching this!!!
+                                        log::info!("Dropbox has no such file {}", e);
+                                        should_upload = true;
                                     }
+                                }
+                                if should_upload {
+                                    let entry = QueueEntry::new(
+                                        metadata.local_path.clone(),
+                                        metadata.dropbox_path.clone(),
+                                        metadata.size,
+                                    );
+                                    let mut state = self.state.write().await;
+                                    state.queue.add(entry);
+                                    total_queued += 1;
                                 }
                             }
                             Err(e) => {
